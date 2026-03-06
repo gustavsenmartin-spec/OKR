@@ -116,20 +116,22 @@ export const Dashboard = () => {
     };
 
     const handleExportPDF = () => {
-        const doc = new jsPDF();
+        const doc = new jsPDF('landscape'); // Landscape to fit more columns
 
         doc.text("TV-aksjonen OKR Initiatives", 14, 15);
 
         const tableData = filteredInitiatives.map(init => {
             const emp = employees.find(e => e.employee_id === init.employee_id)?.name || '';
+            const obj = objectives.find(o => o.objective_id === init.objective_id)?.objective_code || '';
             const kr = keyResults.find(k => k.key_result_id === init.key_result_id)?.full_code || '';
             const dt = new Date(init.updated_at).toLocaleDateString('no-NO');
-            return [emp, kr, init.initiative_title, init.status, dt];
+            const comment = init.comment || '';
+            return [emp, obj, kr, init.initiative_title, init.status, dt, comment];
         });
 
         autoTable(doc, {
             startY: 20,
-            head: [['Ansatt', 'O/KR', 'Initiative', 'Status', 'Dato endret']],
+            head: [['Ansatt', 'Objective', 'Key Result', 'Initiative', 'Status', 'Dato endret', 'Kommentar']],
             body: tableData,
             theme: 'grid',
             headStyles: { fillColor: [15, 23, 42] } // Primary color (Deep Navy)
