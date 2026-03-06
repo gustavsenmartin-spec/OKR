@@ -6,7 +6,7 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
     PieChart, Pie, Cell, Legend
 } from 'recharts';
-import { Download } from 'lucide-react';
+import { Download, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -25,6 +25,9 @@ export const Dashboard = () => {
     const [filterEmp, setFilterEmp] = useState('');
     const [filterStatus, setFilterStatus] = useState('');
 
+    // Sorting state
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+
     // Filtering Logic
     const filteredInitiatives = useMemo(() => {
         return initiatives.filter(i => {
@@ -35,6 +38,49 @@ export const Dashboard = () => {
             return true;
         });
     }, [initiatives, filterObj, filterKR, filterEmp, filterStatus]);
+
+    // Sorting Logic
+    const sortedInitiatives = useMemo(() => {
+        let sortableItems = [...filteredInitiatives];
+        if (sortConfig.key !== null) {
+            sortableItems.sort((a, b) => {
+                let aValue = a[sortConfig.key];
+                let bValue = b[sortConfig.key];
+
+                // For mapped values like Employee Name and Key Result Code
+                if (sortConfig.key === 'employee_name') {
+                    aValue = employees.find(e => e.employee_id === a.employee_id)?.name || '';
+                    bValue = employees.find(e => e.employee_id === b.employee_id)?.name || '';
+                } else if (sortConfig.key === 'kr_code') {
+                    aValue = keyResults.find(k => k.key_result_id === a.key_result_id)?.full_code || '';
+                    bValue = keyResults.find(k => k.key_result_id === b.key_result_id)?.full_code || '';
+                }
+
+                if (aValue < bValue) {
+                    return sortConfig.direction === 'asc' ? -1 : 1;
+                }
+                if (aValue > bValue) {
+                    return sortConfig.direction === 'asc' ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+        return sortableItems;
+    }, [filteredInitiatives, sortConfig, employees, keyResults]);
+
+    const handleSort = (key) => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const getSortIcon = (columnKey) => {
+        if (sortConfig.key !== columnKey) return <ArrowUpDown size={14} style={{ marginLeft: '4px', opacity: 0.5 }} />;
+        if (sortConfig.direction === 'asc') return <ChevronUp size={14} style={{ marginLeft: '4px' }} />;
+        return <ChevronDown size={14} style={{ marginLeft: '4px' }} />;
+    };
 
     // Derived metrics
     const total = filteredInitiatives.length;
@@ -284,20 +330,30 @@ export const Dashboard = () => {
                     <table style={{ minWidth: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
                         <thead>
                             <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-muted)' }}>
-                                <th style={{ padding: '0.75rem' }}>Ansatt</th>
-                                <th style={{ padding: '0.75rem' }}>O/KR</th>
-                                <th style={{ padding: '0.75rem' }}>Initiative</th>
-                                <th style={{ padding: '0.75rem' }}>Status</th>
-                                <th style={{ padding: '0.75rem' }}>Dato endret</th>
+                                <th style={{ padding: '0.75rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('employee_name')}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>Ansatt {getSortIcon('employee_name')}</div>
+                                </th>
+                                <th style={{ padding: '0.75rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('kr_code')}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>O/KR {getSortIcon('kr_code')}</div>
+                                </th>
+                                <th style={{ padding: '0.75rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('initiative_title')}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>Initiative {getSortIcon('initiative_title')}</div>
+                                </th>
+                                <th style={{ padding: '0.75rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('status')}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>Status {getSortIcon('status')}</div>
+                                </th>
+                                <th style={{ padding: '0.75rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('updated_at')}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>Dato endret {getSortIcon('updated_at')}</div>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredInitiatives.length === 0 ? (
+                            {sortedInitiatives.length === 0 ? (
                                 <tr>
                                     <td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>Ingen data å vise med dagens filtre.</td>
                                 </tr>
                             ) : (
-                                filteredInitiatives.map(init => {
+                                sortedInitiatives.map(init => {
                                     const emp = employees.find(e => e.employee_id === init.employee_id);
                                     const kr = keyResults.find(k => k.key_result_id === init.key_result_id);
                                     const dt = new Date(init.updated_at).toLocaleDateString('no-NO');
