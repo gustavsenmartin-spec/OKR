@@ -257,21 +257,48 @@ export const Dashboard = () => {
                 </div>
 
                 {/* Column 4 */}
-                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
-                    <label style={{ visibility: 'hidden', marginBottom: '0.25rem' }}>Nullstill</label>
-                    <button
-                        className="btn-primary"
-                        style={{ backgroundColor: 'white', color: 'var(--primary)', border: '1px solid var(--border)' }}
-                        onClick={() => {
-                            setFilterObj('');
-                            setFilterKR('');
-                            setFilterDep('');
-                            setFilterEmp('');
-                            setFilterStatus('');
-                        }}
-                    >
-                        Nullstill alle filter
-                    </button>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                        <label style={{ visibility: 'hidden' }}>Nullstill</label>
+                        <button
+                            className="btn-primary"
+                            style={{
+                                backgroundColor: 'var(--surface)',
+                                color: 'var(--text-main)',
+                                border: '1px solid var(--border)',
+                                borderBottom: '3px solid var(--text-muted)',
+                                padding: '0.75rem',
+                                borderRadius: 'var(--radius-md)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontWeight: 600,
+                                transition: 'all 0.1s',
+                                cursor: 'pointer'
+                            }}
+                            onMouseDown={(e) => {
+                                e.currentTarget.style.transform = 'translateY(2px)';
+                                e.currentTarget.style.borderBottomWidth = '1px';
+                            }}
+                            onMouseUp={(e) => {
+                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.borderBottomWidth = '3px';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.borderBottomWidth = '3px';
+                            }}
+                            onClick={() => {
+                                setFilterObj('');
+                                setFilterKR('');
+                                setFilterDep('');
+                                setFilterEmp('');
+                                setFilterStatus('');
+                            }}
+                        >
+                            Nullstill alle filter
+                        </button>
+                    </div>
                 </div>
             </div>
 
