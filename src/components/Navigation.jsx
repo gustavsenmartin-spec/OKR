@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, FilePlus, Edit3, Target, Users } from 'lucide-react';
+import { LayoutDashboard, FilePlus, Edit3, Target, Users, ListTree } from 'lucide-react';
 import './Navigation.css';
 
 export const Navigation = () => {
@@ -15,6 +15,10 @@ export const Navigation = () => {
                 <NavLink to="/" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
                     <LayoutDashboard size={20} />
                     <span>Oversikt</span>
+                </NavLink>
+                <NavLink to="/objectives" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
+                    <ListTree size={20} />
+                    <span>Objectives & KRs</span>
                 </NavLink>
                 <NavLink to="/register" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
                     <FilePlus size={20} />
