@@ -40,7 +40,12 @@ export const Employees = () => {
                         </div>
                         <div className="form-group">
                             <label>Avdeling</label>
-                            <input className="form-control" value={department} onChange={e => setDepartment(e.target.value)} />
+                            <select className="form-control" value={department} onChange={e => setDepartment(e.target.value)} required>
+                                <option value="">Velg avdeling...</option>
+                                <option value="Nasjonalt">Nasjonalt</option>
+                                <option value="Kystregionen">Kystregionen</option>
+                                <option value="Region Øst +">Region Øst +</option>
+                            </select>
                         </div>
                         <button type="submit" className="btn-primary" disabled={loading} style={{ marginTop: '1rem', width: '100%' }}>
                             {loading ? 'Lagrer...' : 'Opprett ansatt'}

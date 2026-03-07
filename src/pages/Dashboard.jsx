@@ -24,6 +24,7 @@ export const Dashboard = () => {
     const [filterKR, setFilterKR] = useState('');
     const [filterEmp, setFilterEmp] = useState('');
     const [filterStatus, setFilterStatus] = useState('');
+    const [filterDep, setFilterDep] = useState('');
 
     // Sorting state
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
@@ -35,9 +36,13 @@ export const Dashboard = () => {
             if (filterKR && i.key_result_id !== filterKR) return false;
             if (filterEmp && i.employee_id !== filterEmp) return false;
             if (filterStatus && i.status !== filterStatus) return false;
+            if (filterDep) {
+                const emp = employees.find(e => e.employee_id === i.employee_id);
+                if (!emp || emp.department !== filterDep) return false;
+            }
             return true;
         });
-    }, [initiatives, filterObj, filterKR, filterEmp, filterStatus]);
+    }, [initiatives, filterObj, filterKR, filterEmp, filterStatus, filterDep, employees]);
 
     // Sorting Logic
     const sortedInitiatives = useMemo(() => {
@@ -112,6 +117,7 @@ export const Dashboard = () => {
     const empTableData = useMemo(() => {
         return employees
             .filter(e => !filterEmp || e.employee_id === filterEmp)
+            .filter(e => !filterDep || e.department === filterDep)
             .map(e => {
                 const myInits = filteredInitiatives.filter(i => i.employee_id === e.employee_id);
                 const ferdig = myInits.filter(i => i.status === 'Ferdig').length;
@@ -121,7 +127,7 @@ export const Dashboard = () => {
                 return { ...e, total: myInits.length, ferdig, bak, pa, foran };
             })
             .filter(e => e.total > 0 || filterEmp);
-    }, [employees, filteredInitiatives, filterEmp]);
+    }, [employees, filteredInitiatives, filterEmp, filterDep]);
 
     // Auto-filtering KR based on selected Obj
     const visibleKRs = useMemo(() => {
@@ -221,6 +227,15 @@ export const Dashboard = () => {
                     <select className="form-control" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
                         <option value="">Alle statuser</option>
                         {Object.keys(STATUS_COLORS).map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label>Avdeling</label>
+                    <select className="form-control" value={filterDep} onChange={(e) => setFilterDep(e.target.value)}>
+                        <option value="">Alle avdelinger</option>
+                        <option value="Nasjonalt">Nasjonalt</option>
+                        <option value="Kystregionen">Kystregionen</option>
+                        <option value="Region Øst +">Region Øst +</option>
                     </select>
                 </div>
             </div>
