@@ -106,5 +106,15 @@ export const api = {
 
         if (error) throw new Error(error.message);
         return data;
+    },
+
+    deleteInitiative: async (initiative_id) => {
+        const { error } = await supabase
+            .from('initiatives')
+            .delete()
+            .eq('initiative_id', initiative_id);
+
+        if (error) throw new Error(error.message);
+        return true;
     }
 };

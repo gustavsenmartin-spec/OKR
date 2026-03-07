@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useData } from '../context/DataContext';
 import { api } from '../services/api';
 import { StatusBadge } from '../components/StatusBadge';
+import { Trash2, Edit2 } from 'lucide-react';
 
 export const UpdateInitiatives = () => {
     const { employees, objectives, keyResults, initiatives, currentEmployee, setCurrentEmployee, refreshInitiatives } = useData();
@@ -84,20 +85,43 @@ export const UpdateInitiatives = () => {
 };
 
 const InitiativeItem = ({ initiative, onUpdate }) => {
+    const [title, setTitle] = useState(initiative.initiative_title || '');
+    const [description, setDescription] = useState(initiative.initiative_description || '');
     const [status, setStatus] = useState(initiative.status);
     const [comment, setComment] = useState(initiative.comment || '');
     const [loading, setLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
 
     const handleSave = async () => {
+        if (!title.trim()) {
+            alert("Initiativet må ha en tittel.");
+            return;
+        }
         setLoading(true);
         try {
-            await api.updateInitiative(initiative.initiative_id, { status, comment });
+            await api.updateInitiative(initiative.initiative_id, {
+                initiative_title: title,
+                initiative_description: description,
+                status,
+                comment
+            });
             await onUpdate();
             setIsEditing(false);
         } catch (err) {
             alert("Kunne ikke lagre: " + err.message);
         } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!window.confirm("Er du helt sikker på at du vil slette dette initiativet?")) return;
+        setLoading(true);
+        try {
+            await api.deleteInitiative(initiative.initiative_id);
+            await onUpdate();
+        } catch (err) {
+            alert("Kunne ikke slette: " + err.message);
             setLoading(false);
         }
     };
@@ -135,7 +159,15 @@ const InitiativeItem = ({ initiative, onUpdate }) => {
             {isEditing ? (
                 <div style={{ marginTop: '1rem', borderTop: '1px dashed var(--border)', paddingTop: '1rem' }}>
                     <div className="form-group">
-                        <label>Endre status</label>
+                        <label>Tittel</label>
+                        <input className="form-control" value={title} onChange={e => setTitle(e.target.value)} required />
+                    </div>
+                    <div className="form-group">
+                        <label>Beskrivelse (valgfritt)</label>
+                        <textarea className="form-control" rows={2} value={description} onChange={e => setDescription(e.target.value)} />
+                    </div>
+                    <div className="form-group">
+                        <label>Status</label>
                         <select className="form-control" value={status} onChange={e => setStatus(e.target.value)}>
                             <option value="Bak skjema">Bak skjema</option>
                             <option value="På skjema">På skjema</option>
@@ -153,9 +185,12 @@ const InitiativeItem = ({ initiative, onUpdate }) => {
                     </div>
                 </div>
             ) : (
-                <div style={{ marginTop: '1rem' }}>
-                    <button className="btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.875rem', backgroundColor: 'var(--background)', color: 'var(--text-main)', border: '1px solid var(--border)' }} onClick={() => setIsEditing(true)}>
-                        Oppdater status eller kommentar
+                <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem' }}>
+                    <button className="btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.875rem', backgroundColor: 'var(--background)', color: 'var(--text-main)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={() => setIsEditing(true)}>
+                        <Edit2 size={16} /> Rediger
+                    </button>
+                    <button className="btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.875rem', backgroundColor: '#FEF2F2', color: '#EF4444', border: '1px solid #FECACA', display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={handleDelete} disabled={loading}>
+                        <Trash2 size={16} /> {loading ? 'Sletter...' : 'Slett'}
                     </button>
                 </div>
             )}
