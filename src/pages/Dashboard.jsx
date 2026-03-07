@@ -135,6 +135,12 @@ export const Dashboard = () => {
         return keyResults.filter(kr => kr.objective_id === filterObj);
     }, [keyResults, filterObj]);
 
+    // Auto-filtering Employees based on selected Department
+    const visibleEmployees = useMemo(() => {
+        if (!filterDep) return employees;
+        return employees.filter(e => e.department === filterDep);
+    }, [employees, filterDep]);
+
     const handleExportCSV = () => {
         const headers = ['Ansatt', 'Objective', 'Key Result', 'Initiative', 'Status', 'Dato endret', 'Kommentar'];
 
@@ -219,7 +225,7 @@ export const Dashboard = () => {
                     <label>Ansatt</label>
                     <select className="form-control" value={filterEmp} onChange={(e) => setFilterEmp(e.target.value)}>
                         <option value="">Alle Ansatte</option>
-                        {employees.map(e => <option key={e.employee_id} value={e.employee_id}>{e.name}</option>)}
+                        {visibleEmployees.map(e => <option key={e.employee_id} value={e.employee_id}>{e.name}</option>)}
                     </select>
                 </div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
@@ -231,7 +237,7 @@ export const Dashboard = () => {
                 </div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                     <label>Avdeling</label>
-                    <select className="form-control" value={filterDep} onChange={(e) => setFilterDep(e.target.value)}>
+                    <select className="form-control" value={filterDep} onChange={(e) => { setFilterDep(e.target.value); setFilterEmp(''); }}>
                         <option value="">Alle avdelinger</option>
                         <option value="Nasjonalt">Nasjonalt</option>
                         <option value="Kystregionen">Kystregionen</option>
