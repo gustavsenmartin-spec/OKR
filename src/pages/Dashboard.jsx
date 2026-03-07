@@ -206,43 +206,72 @@ export const Dashboard = () => {
             <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Aggregert oversikt over fremdrift og OKR-status.</p>
 
             {/* Filters */}
-            <div className="card" style={{ marginBottom: '2rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', alignItems: 'flex-end', backgroundColor: 'var(--surface)' }}>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label>Objective</label>
-                    <select className="form-control" value={filterObj} onChange={(e) => { setFilterObj(e.target.value); setFilterKR(''); }}>
-                        <option value="">Alle Objectives</option>
-                        {objectives.map(o => <option key={o.objective_id} value={o.objective_id}>{o.objective_code} - {o.objective_title.substring(0, 30)}...</option>)}
-                    </select>
+            <div className="card" style={{ marginBottom: '2rem', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', backgroundColor: 'var(--surface)' }}>
+                {/* Column 1 */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                        <label>Objective</label>
+                        <select className="form-control" value={filterObj} onChange={(e) => { setFilterObj(e.target.value); setFilterKR(''); }}>
+                            <option value="">Alle Objectives</option>
+                            {objectives.map(o => <option key={o.objective_id} value={o.objective_id}>{o.objective_code} - {o.objective_title.substring(0, 30)}...</option>)}
+                        </select>
+                    </div>
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                        <label>Key Result</label>
+                        <select className="form-control" value={filterKR} onChange={(e) => setFilterKR(e.target.value)}>
+                            <option value="">Alle Key Results</option>
+                            {visibleKRs.map(kr => <option key={kr.key_result_id} value={kr.key_result_id}>{kr.full_code}</option>)}
+                        </select>
+                    </div>
                 </div>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label>Key Result</label>
-                    <select className="form-control" value={filterKR} onChange={(e) => setFilterKR(e.target.value)}>
-                        <option value="">Alle Key Results</option>
-                        {visibleKRs.map(kr => <option key={kr.key_result_id} value={kr.key_result_id}>{kr.full_code}</option>)}
-                    </select>
+
+                {/* Column 2 */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                        <label>Avdeling</label>
+                        <select className="form-control" value={filterDep} onChange={(e) => { setFilterDep(e.target.value); setFilterEmp(''); }}>
+                            <option value="">Alle avdelinger</option>
+                            <option value="Nasjonalt">Nasjonalt</option>
+                            <option value="Kystregionen">Kystregionen</option>
+                            <option value="Region Øst +">Region Øst +</option>
+                        </select>
+                    </div>
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                        <label>Ansatt</label>
+                        <select className="form-control" value={filterEmp} onChange={(e) => setFilterEmp(e.target.value)}>
+                            <option value="">Alle Ansatte</option>
+                            {visibleEmployees.map(e => <option key={e.employee_id} value={e.employee_id}>{e.name}</option>)}
+                        </select>
+                    </div>
                 </div>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label>Ansatt</label>
-                    <select className="form-control" value={filterEmp} onChange={(e) => setFilterEmp(e.target.value)}>
-                        <option value="">Alle Ansatte</option>
-                        {visibleEmployees.map(e => <option key={e.employee_id} value={e.employee_id}>{e.name}</option>)}
-                    </select>
+
+                {/* Column 3 */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                        <label>Status</label>
+                        <select className="form-control" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+                            <option value="">Alle statuser</option>
+                            {Object.keys(STATUS_COLORS).map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                    </div>
                 </div>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label>Status</label>
-                    <select className="form-control" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
-                        <option value="">Alle statuser</option>
-                        {Object.keys(STATUS_COLORS).map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                </div>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label>Avdeling</label>
-                    <select className="form-control" value={filterDep} onChange={(e) => { setFilterDep(e.target.value); setFilterEmp(''); }}>
-                        <option value="">Alle avdelinger</option>
-                        <option value="Nasjonalt">Nasjonalt</option>
-                        <option value="Kystregionen">Kystregionen</option>
-                        <option value="Region Øst +">Region Øst +</option>
-                    </select>
+
+                {/* Column 4 */}
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+                    <label style={{ visibility: 'hidden', marginBottom: '0.25rem' }}>Nullstill</label>
+                    <button
+                        className="btn-primary"
+                        style={{ backgroundColor: 'white', color: 'var(--primary)', border: '1px solid var(--border)' }}
+                        onClick={() => {
+                            setFilterObj('');
+                            setFilterKR('');
+                            setFilterDep('');
+                            setFilterEmp('');
+                            setFilterStatus('');
+                        }}
+                    >
+                        Nullstill alle filter
+                    </button>
                 </div>
             </div>
 
