@@ -127,6 +127,7 @@ const KeyResultSection = ({ keyResult, objective, initiatives, currentEmployee, 
             ) : (
                 <button
                     className="btn-primary"
+                    title="Eksempel: Ringe til tre skoler som ikke har vært med tidligere og prøve engasjere de til årets aksjon."
                     onClick={() => setIsAdding(true)}
                     style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: 'fit-content' }}
                 >
