@@ -33,7 +33,7 @@ export const Overview = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <div>
                     <h2>Oversikt over OKR</h2>
-                    <p style={{ color: 'var(--text-muted)' }}>Frist for registrering av initiativer: <strong>15. mai 2026</strong></p>
+                    <p style={{ color: 'var(--text-muted)' }}>Frist for registrering av initiativer: <strong>før påske</strong></p>
                 </div>
             </div>
 

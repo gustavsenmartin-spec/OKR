@@ -223,7 +223,7 @@ export const Dashboard = () => {
 
     return (
         <div className="page" style={{ maxWidth: '1400px' }}>
-            <h2>Ledelsens Dashboard</h2>
+            <h2>Stiftelsens dashboard</h2>
             <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Aggregert oversikt over fremdrift og OKR-status.</p>
 
             {/* Filters */}
@@ -337,7 +337,7 @@ export const Dashboard = () => {
                     style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', marginBottom: showCharts ? '1.5rem' : 0 }}
                     onClick={() => setShowCharts(!showCharts)}
                 >
-                    <h3 style={{ margin: 0 }}>Diagrammer og nullpunktsanalyse</h3>
+                    <h3 style={{ margin: 0 }}>Diagrammer</h3>
                     {showCharts ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </div>
                 {showCharts && (
