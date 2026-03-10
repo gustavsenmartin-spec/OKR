@@ -29,6 +29,12 @@ export const Dashboard = () => {
     // Sorting state
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
+    // Collapsible states
+    const [showCharts, setShowCharts] = useState(false);
+    const [showEmpTable, setShowEmpTable] = useState(false);
+    const [showObjTable, setShowObjTable] = useState(false);
+    const [showInitTable, setShowInitTable] = useState(false);
+
     // Filtering Logic
     const filteredInitiatives = useMemo(() => {
         return initiatives.filter(i => {
@@ -326,182 +332,207 @@ export const Dashboard = () => {
             </div>
 
             {/* Charts */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: '2rem', marginBottom: '2rem' }}>
-                <div className="card">
-                    <h3 style={{ marginBottom: '1.5rem' }}>Initiatives per Objective</h3>
-                    <div style={{ height: '300px' }}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={objData}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
-                                <XAxis dataKey="name" tick={{ fill: 'var(--text-muted)' }} />
-                                <YAxis allowDecimals={false} tick={{ fill: 'var(--text-muted)' }} />
-                                <RechartsTooltip
-                                    cursor={{ fill: 'var(--background)' }}
-                                    contentStyle={{ borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-md)' }}
-                                />
-                                <Bar dataKey="initiatives" fill="var(--secondary)" radius={[4, 4, 0, 0]} name="Antall Initiatives" />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
+            <div className="card" style={{ marginBottom: '2rem' }}>
+                <div
+                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', marginBottom: showCharts ? '1.5rem' : 0 }}
+                    onClick={() => setShowCharts(!showCharts)}
+                >
+                    <h3 style={{ margin: 0 }}>Diagrammer og nullpunktsanalyse</h3>
+                    {showCharts ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </div>
-                <div className="card">
-                    <h3 style={{ marginBottom: '1.5rem' }}>Statusfordeling</h3>
-                    <div style={{ height: '300px' }}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={statusData}
-                                    innerRadius={60}
-                                    outerRadius={100}
-                                    paddingAngle={2}
-                                    dataKey="value"
-                                >
-                                    {statusData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={STATUS_COLORS[entry.name]} />
-                                    ))}
-                                </Pie>
-                                <RechartsTooltip
-                                    contentStyle={{ borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-md)' }}
-                                />
-                                <Legend verticalAlign="bottom" height={36} iconType="circle" />
-                            </PieChart>
-                        </ResponsiveContainer>
+                {showCharts && (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: '2rem' }}>
+                        <div>
+                            <h4 style={{ marginBottom: '1rem', color: 'var(--text-muted)', fontSize: '1rem' }}>Initiatives per Objective</h4>
+                            <div style={{ height: '300px' }}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={objData}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                                        <XAxis dataKey="name" tick={{ fill: 'var(--text-muted)' }} />
+                                        <YAxis allowDecimals={false} tick={{ fill: 'var(--text-muted)' }} />
+                                        <RechartsTooltip cursor={{ fill: 'var(--background)' }} contentStyle={{ borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-md)' }} />
+                                        <Bar dataKey="initiatives" fill="var(--secondary)" radius={[4, 4, 0, 0]} name="Antall Initiatives" />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style={{ marginBottom: '1rem', color: 'var(--text-muted)', fontSize: '1rem' }}>Statusfordeling</h4>
+                            <div style={{ height: '300px' }}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                        <Pie data={statusData} innerRadius={60} outerRadius={100} paddingAngle={2} dataKey="value">
+                                            {statusData.map((entry, index) => <Cell key={`cell-${index}`} fill={STATUS_COLORS[entry.name]} />)}
+                                        </Pie>
+                                        <RechartsTooltip contentStyle={{ borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-md)' }} />
+                                        <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
 
             {/* Tables */}
             <div className="card" style={{ marginBottom: '2rem' }}>
-                <h3 style={{ marginBottom: '1.5rem' }}>Ansattoversikt (Aggregert)</h3>
-                <div style={{ overflowX: 'auto' }}>
-                    <table style={{ minWidth: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
-                        <thead>
-                            <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-muted)' }}>
-                                <th style={{ padding: '0.75rem' }}>Ansatt</th>
-                                <th style={{ padding: '0.75rem', textAlign: 'center' }}>Totalt</th>
-                                <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-done)' }}>Ferdig</th>
-                                <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-ahead)' }}>Foran skjema</th>
-                                <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-on-track)' }}>På skjema</th>
-                                <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-behind)' }}>Bak skjema</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {empTableData.map(e => (
-                                <tr key={e.employee_id} style={{ borderBottom: '1px solid var(--border)' }}>
-                                    <td style={{ padding: '0.75rem', fontWeight: 500 }}>{e.name}</td>
-                                    <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: 600 }}>{e.total}</td>
-                                    <td style={{ padding: '0.75rem', textAlign: 'center' }}>{e.ferdig}</td>
-                                    <td style={{ padding: '0.75rem', textAlign: 'center' }}>{e.foran}</td>
-                                    <td style={{ padding: '0.75rem', textAlign: 'center' }}>{e.pa}</td>
-                                    <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: e.bak > 0 ? 600 : 400, color: e.bak > 0 ? 'var(--status-behind)' : 'inherit' }}>{e.bak}</td>
-                                </tr>
-                            ))}
-                            {empTableData.length === 0 && (
-                                <tr>
-                                    <td colSpan="6" style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-muted)' }}>Ingen ansatte å vise med disse filtrene.</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                <div
+                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', marginBottom: showEmpTable ? '1.5rem' : 0 }}
+                    onClick={() => setShowEmpTable(!showEmpTable)}
+                >
+                    <h3 style={{ margin: 0 }}>Ansattoversikt (Aggregert)</h3>
+                    {showEmpTable ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </div>
+                {showEmpTable && (
+                    <div style={{ overflowX: 'auto' }}>
+                        <table style={{ minWidth: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+                            <thead>
+                                <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-muted)' }}>
+                                    <th style={{ padding: '0.75rem' }}>Ansatt</th>
+                                    <th style={{ padding: '0.75rem', textAlign: 'center' }}>Totalt</th>
+                                    <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-done)' }}>Ferdig</th>
+                                    <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-ahead)' }}>Foran skjema</th>
+                                    <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-on-track)' }}>På skjema</th>
+                                    <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-behind)' }}>Bak skjema</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {empTableData.map(e => (
+                                    <tr key={e.employee_id} style={{ borderBottom: '1px solid var(--border)' }}>
+                                        <td style={{ padding: '0.75rem', fontWeight: 500 }}>{e.name}</td>
+                                        <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: 600 }}>{e.total}</td>
+                                        <td style={{ padding: '0.75rem', textAlign: 'center' }}>{e.ferdig}</td>
+                                        <td style={{ padding: '0.75rem', textAlign: 'center' }}>{e.foran}</td>
+                                        <td style={{ padding: '0.75rem', textAlign: 'center' }}>{e.pa}</td>
+                                        <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: e.bak > 0 ? 600 : 400, color: e.bak > 0 ? 'var(--status-behind)' : 'inherit' }}>{e.bak}</td>
+                                    </tr>
+                                ))}
+                                {empTableData.length === 0 && (
+                                    <tr>
+                                        <td colSpan="6" style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-muted)' }}>Ingen ansatte å vise med disse filtrene.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
 
             <div className="card" style={{ marginBottom: '2rem' }}>
-                <h3 style={{ marginBottom: '1.5rem' }}>Objectiveoversikt (Aggregert)</h3>
-                <div style={{ overflowX: 'auto' }}>
-                    <table style={{ minWidth: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
-                        <thead>
-                            <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-muted)' }}>
-                                <th style={{ padding: '0.75rem' }}>Objective</th>
-                                <th style={{ padding: '0.75rem', textAlign: 'center' }}>Totalt</th>
-                                <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-done)' }}>Ferdig</th>
-                                <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-ahead)' }}>Foran skjema</th>
-                                <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-on-track)' }}>På skjema</th>
-                                <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-behind)' }}>Bak skjema</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {objTableData.map(o => (
-                                <tr key={o.objective_id} style={{ borderBottom: '1px solid var(--border)' }}>
-                                    <td style={{ padding: '0.75rem', fontWeight: 500 }}>{o.objective_code} - {o.objective_title}</td>
-                                    <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: 600 }}>{o.total}</td>
-                                    <td style={{ padding: '0.75rem', textAlign: 'center' }}>{o.ferdig}</td>
-                                    <td style={{ padding: '0.75rem', textAlign: 'center' }}>{o.foran}</td>
-                                    <td style={{ padding: '0.75rem', textAlign: 'center' }}>{o.pa}</td>
-                                    <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: o.bak > 0 ? 600 : 400, color: o.bak > 0 ? 'var(--status-behind)' : 'inherit' }}>{o.bak}</td>
-                                </tr>
-                            ))}
-                            {objTableData.length === 0 && (
-                                <tr>
-                                    <td colSpan="6" style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-muted)' }}>Ingen objectives å vise med disse filtrene.</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                <div
+                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', marginBottom: showObjTable ? '1.5rem' : 0 }}
+                    onClick={() => setShowObjTable(!showObjTable)}
+                >
+                    <h3 style={{ margin: 0 }}>Objectiveoversikt (Aggregert)</h3>
+                    {showObjTable ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </div>
+                {showObjTable && (
+                    <div style={{ overflowX: 'auto' }}>
+                        <table style={{ minWidth: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+                            <thead>
+                                <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-muted)' }}>
+                                    <th style={{ padding: '0.75rem' }}>Objective</th>
+                                    <th style={{ padding: '0.75rem', textAlign: 'center' }}>Totalt</th>
+                                    <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-done)' }}>Ferdig</th>
+                                    <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-ahead)' }}>Foran skjema</th>
+                                    <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-on-track)' }}>På skjema</th>
+                                    <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-behind)' }}>Bak skjema</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {objTableData.map(o => (
+                                    <tr key={o.objective_id} style={{ borderBottom: '1px solid var(--border)' }}>
+                                        <td style={{ padding: '0.75rem', fontWeight: 500 }}>{o.objective_code} - {o.objective_title}</td>
+                                        <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: 600 }}>{o.total}</td>
+                                        <td style={{ padding: '0.75rem', textAlign: 'center' }}>{o.ferdig}</td>
+                                        <td style={{ padding: '0.75rem', textAlign: 'center' }}>{o.foran}</td>
+                                        <td style={{ padding: '0.75rem', textAlign: 'center' }}>{o.pa}</td>
+                                        <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: o.bak > 0 ? 600 : 400, color: o.bak > 0 ? 'var(--status-behind)' : 'inherit' }}>{o.bak}</td>
+                                    </tr>
+                                ))}
+                                {objTableData.length === 0 && (
+                                    <tr>
+                                        <td colSpan="6" style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-muted)' }}>Ingen objectives å vise med disse filtrene.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
 
             <div className="card">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <div
+                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', marginBottom: showInitTable ? '1.5rem' : 0 }}
+                    onClick={() => setShowInitTable(!showInitTable)}
+                >
                     <h3 style={{ margin: 0 }}>Detaljliste initiatives</h3>
-                    <div style={{ display: 'flex', gap: '1rem' }}>
-                        <button className="btn-primary" onClick={handleExportCSV} style={{ backgroundColor: 'var(--surface)', color: 'var(--primary)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <Download size={16} /> Til CSV
-                        </button>
-                        <button className="btn-primary" onClick={handleExportPDF} style={{ backgroundColor: 'var(--surface)', color: 'var(--primary)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <Download size={16} /> Til PDF
-                        </button>
-                    </div>
+                    {showInitTable ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </div>
-                <div style={{ overflowX: 'auto' }}>
-                    <table style={{ minWidth: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
-                        <thead>
-                            <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-muted)' }}>
-                                <th style={{ padding: '0.75rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('employee_name')}>
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>Ansatt {getSortIcon('employee_name')}</div>
-                                </th>
-                                <th style={{ padding: '0.75rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('kr_code')}>
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>O/KR {getSortIcon('kr_code')}</div>
-                                </th>
-                                <th style={{ padding: '0.75rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('initiative_title')}>
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>Initiative {getSortIcon('initiative_title')}</div>
-                                </th>
-                                <th style={{ padding: '0.75rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('status')}>
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>Status {getSortIcon('status')}</div>
-                                </th>
-                                <th style={{ padding: '0.75rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('updated_at')}>
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>Dato endret {getSortIcon('updated_at')}</div>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {sortedInitiatives.length === 0 ? (
-                                <tr>
-                                    <td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>Ingen data å vise med dagens filtre.</td>
-                                </tr>
-                            ) : (
-                                sortedInitiatives.map(init => {
-                                    const emp = employees.find(e => e.employee_id === init.employee_id);
-                                    const kr = keyResults.find(k => k.key_result_id === init.key_result_id);
-                                    const dt = new Date(init.updated_at).toLocaleDateString('no-NO');
 
-                                    return (
-                                        <tr key={init.initiative_id} style={{ borderBottom: '1px solid var(--border)' }}>
-                                            <td style={{ padding: '0.75rem', fontWeight: 500 }}>{emp?.name}</td>
-                                            <td style={{ padding: '0.75rem', color: 'var(--text-muted)' }}>{kr?.full_code}</td>
-                                            <td style={{ padding: '0.75rem' }}>
-                                                <div style={{ fontWeight: 500 }}>{init.initiative_title}</div>
-                                                {init.comment && <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>💬 {init.comment}</div>}
-                                            </td>
-                                            <td style={{ padding: '0.75rem' }}><StatusBadge status={init.status} /></td>
-                                            <td style={{ padding: '0.75rem', color: 'var(--text-muted)' }}>{dt}</td>
+                {showInitTable && (
+                    <>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                            <div style={{ display: 'flex', gap: '1rem' }}>
+                                <button className="btn-primary" onClick={handleExportCSV} style={{ backgroundColor: 'var(--surface)', color: 'var(--primary)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <Download size={16} /> Til CSV
+                                </button>
+                                <button className="btn-primary" onClick={handleExportPDF} style={{ backgroundColor: 'var(--surface)', color: 'var(--primary)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <Download size={16} /> Til PDF
+                                </button>
+                            </div>
+                        </div>
+                        <div style={{ overflowX: 'auto' }}>
+                            <table style={{ minWidth: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+                                <thead>
+                                    <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-muted)' }}>
+                                        <th style={{ padding: '0.75rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('employee_name')}>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>Ansatt {getSortIcon('employee_name')}</div>
+                                        </th>
+                                        <th style={{ padding: '0.75rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('kr_code')}>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>O/KR {getSortIcon('kr_code')}</div>
+                                        </th>
+                                        <th style={{ padding: '0.75rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('initiative_title')}>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>Initiative {getSortIcon('initiative_title')}</div>
+                                        </th>
+                                        <th style={{ padding: '0.75rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('status')}>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>Status {getSortIcon('status')}</div>
+                                        </th>
+                                        <th style={{ padding: '0.75rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('updated_at')}>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>Dato endret {getSortIcon('updated_at')}</div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {sortedInitiatives.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>Ingen data å vise med dagens filtre.</td>
                                         </tr>
-                                    )
-                                })
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                                    ) : (
+                                        sortedInitiatives.map(init => {
+                                            const emp = employees.find(e => e.employee_id === init.employee_id);
+                                            const kr = keyResults.find(k => k.key_result_id === init.key_result_id);
+                                            const dt = new Date(init.updated_at).toLocaleDateString('no-NO');
+
+                                            return (
+                                                <tr key={init.initiative_id} style={{ borderBottom: '1px solid var(--border)' }}>
+                                                    <td style={{ padding: '0.75rem', fontWeight: 500 }}>{emp?.name}</td>
+                                                    <td style={{ padding: '0.75rem', color: 'var(--text-muted)' }}>{kr?.full_code}</td>
+                                                    <td style={{ padding: '0.75rem' }}>
+                                                        <div style={{ fontWeight: 500 }}>{init.initiative_title}</div>
+                                                        {init.comment && <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>💬 {init.comment}</div>}
+                                                    </td>
+                                                    <td style={{ padding: '0.75rem' }}><StatusBadge status={init.status} /></td>
+                                                    <td style={{ padding: '0.75rem', color: 'var(--text-muted)' }}>{dt}</td>
+                                                </tr>
+                                            )
+                                        })
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
+                )}
             </div>
 
         </div>
