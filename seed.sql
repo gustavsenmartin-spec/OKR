@@ -69,7 +69,7 @@ INSERT INTO key_results (key_result_id, objective_id, key_result_code, full_code
 ('KR1-1', 'O1', 'KR1', 'O1-KR1', 'Antall som har vært bøssebærer tidligere og er registrert i Aksjonsportalen skal øke fra 12,7% til 20%', 1),
 ('KR1-2', 'O1', 'KR2', 'O1-KR2', '23 000 bøssebærere registrerer seg på tvaksjonen.no (2025: 14 300)', 2),
 ('KR1-3', 'O1', 'KR3', 'O1-KR3', 'Kjennskap til at TV-aksjonen går til NRC Flyktninghjelpen / hjem til mennesker på flukt i 2026 skal øke fra 21% til 35%', 3),
-('KR1-4', 'O1', 'KR4', 'O1-KR4', 'Totalt antall bøsser øker fra 28 000 til 38 000', 4);
+('KR1-4', 'O1', 'KR4', 'O1-KR4', 'Totalt antall bøssebærere øker fra 28 000 til 38 000', 4);
 
 -- 9. Sett inn Key Results for O2
 INSERT INTO key_results (key_result_id, objective_id, key_result_code, full_code, key_result_title, sort_order) VALUES
