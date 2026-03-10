@@ -129,6 +129,21 @@ export const Dashboard = () => {
             .filter(e => e.total > 0 || filterEmp);
     }, [employees, filteredInitiatives, filterEmp, filterDep]);
 
+    // Objective Table Data
+    const objTableData = useMemo(() => {
+        return objectives
+            .filter(o => !filterObj || o.objective_id === filterObj)
+            .map(o => {
+                const myInits = filteredInitiatives.filter(i => i.objective_id === o.objective_id);
+                const ferdig = myInits.filter(i => i.status === 'Ferdig').length;
+                const bak = myInits.filter(i => i.status === 'Bak skjema').length;
+                const pa = myInits.filter(i => i.status === 'På skjema').length;
+                const foran = myInits.filter(i => i.status === 'Foran skjema').length;
+                return { ...o, total: myInits.length, ferdig, bak, pa, foran };
+            })
+            .filter(o => o.total > 0 || filterObj);
+    }, [objectives, filteredInitiatives, filterObj]);
+
     // Auto-filtering KR based on selected Obj
     const visibleKRs = useMemo(() => {
         if (!filterObj) return keyResults;
@@ -384,6 +399,41 @@ export const Dashboard = () => {
                             {empTableData.length === 0 && (
                                 <tr>
                                     <td colSpan="6" style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-muted)' }}>Ingen ansatte å vise med disse filtrene.</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div className="card" style={{ marginBottom: '2rem' }}>
+                <h3 style={{ marginBottom: '1.5rem' }}>Objectiveoversikt (Aggregert)</h3>
+                <div style={{ overflowX: 'auto' }}>
+                    <table style={{ minWidth: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+                        <thead>
+                            <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-muted)' }}>
+                                <th style={{ padding: '0.75rem' }}>Objective</th>
+                                <th style={{ padding: '0.75rem', textAlign: 'center' }}>Totalt</th>
+                                <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-done)' }}>Ferdig</th>
+                                <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-ahead)' }}>Foran skjema</th>
+                                <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-on-track)' }}>På skjema</th>
+                                <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-behind)' }}>Bak skjema</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {objTableData.map(o => (
+                                <tr key={o.objective_id} style={{ borderBottom: '1px solid var(--border)' }}>
+                                    <td style={{ padding: '0.75rem', fontWeight: 500 }}>{o.objective_code} - {o.objective_title}</td>
+                                    <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: 600 }}>{o.total}</td>
+                                    <td style={{ padding: '0.75rem', textAlign: 'center' }}>{o.ferdig}</td>
+                                    <td style={{ padding: '0.75rem', textAlign: 'center' }}>{o.foran}</td>
+                                    <td style={{ padding: '0.75rem', textAlign: 'center' }}>{o.pa}</td>
+                                    <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: o.bak > 0 ? 600 : 400, color: o.bak > 0 ? 'var(--status-behind)' : 'inherit' }}>{o.bak}</td>
+                                </tr>
+                            ))}
+                            {objTableData.length === 0 && (
+                                <tr>
+                                    <td colSpan="6" style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-muted)' }}>Ingen objectives å vise med disse filtrene.</td>
                                 </tr>
                             )}
                         </tbody>
