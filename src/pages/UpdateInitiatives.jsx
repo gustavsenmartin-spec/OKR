@@ -172,7 +172,9 @@ const InitiativeItem = ({ initiative, onUpdate }) => {
                             <option value="Bak skjema">Bak skjema</option>
                             <option value="På skjema">På skjema</option>
                             <option value="Foran skjema">Foran skjema</option>
-                            <option value="Ferdig">Ferdig</option>
+                            <option value="Fullført">Fullført</option>
+                            <option value="Ikke fullført, men arkiveres">Ikke fullført, men arkiveres</option>
+                            <option value="Ikke fullført, videreføres til neste periode">Ikke fullført, videreføres til neste periode</option>
                         </select>
                     </div>
                     <div className="form-group">

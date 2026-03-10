@@ -51,7 +51,9 @@ export const Overview = () => {
                         <StatusRow label="Bak skjema" count={countStatus('Bak skjema')} total={initiatives.length} color="var(--status-behind)" />
                         <StatusRow label="På skjema" count={countStatus('På skjema')} total={initiatives.length} color="var(--status-on-track)" />
                         <StatusRow label="Foran skjema" count={countStatus('Foran skjema')} total={initiatives.length} color="var(--status-ahead)" />
-                        <StatusRow label="Ferdig" count={countStatus('Ferdig')} total={initiatives.length} color="var(--status-done)" />
+                        <StatusRow label="Fullført" count={countStatus('Fullført')} total={initiatives.length} color="var(--status-done)" />
+                        <StatusRow label="Arkiveres" count={countStatus('Ikke fullført, men arkiveres')} total={initiatives.length} color="#475569" />
+                        <StatusRow label="Videreføres" count={countStatus('Ikke fullført, videreføres til neste periode')} total={initiatives.length} color="#7C3AED" />
                     </div>
                 </div>
 

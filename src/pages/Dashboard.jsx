@@ -14,7 +14,9 @@ const STATUS_COLORS = {
     'Bak skjema': '#EF4444',
     'På skjema': '#F59E0B',
     'Foran skjema': '#10B981',
-    'Ferdig': '#3B82F6'
+    'Fullført': '#3B82F6',
+    'Ikke fullført, men arkiveres': '#475569',
+    'Ikke fullført, videreføres til neste periode': '#7C3AED'
 };
 
 export const Dashboard = () => {
@@ -95,7 +97,7 @@ export const Dashboard = () => {
 
     // Derived metrics
     const total = filteredInitiatives.length;
-    const finished = filteredInitiatives.filter(i => i.status === 'Ferdig').length;
+    const finished = filteredInitiatives.filter(i => i.status === 'Fullført').length;
     const behind = filteredInitiatives.filter(i => i.status === 'Bak skjema').length;
     const completionRate = total > 0 ? Math.round((finished / total) * 100) : 0;
     const empsWithObj = new Set(filteredInitiatives.map(i => i.employee_id)).size;
@@ -126,7 +128,7 @@ export const Dashboard = () => {
             .filter(e => !filterDep || e.department === filterDep)
             .map(e => {
                 const myInits = filteredInitiatives.filter(i => i.employee_id === e.employee_id);
-                const ferdig = myInits.filter(i => i.status === 'Ferdig').length;
+                const ferdig = myInits.filter(i => i.status === 'Fullført').length;
                 const bak = myInits.filter(i => i.status === 'Bak skjema').length;
                 const pa = myInits.filter(i => i.status === 'På skjema').length;
                 const foran = myInits.filter(i => i.status === 'Foran skjema').length;
@@ -141,7 +143,7 @@ export const Dashboard = () => {
             .filter(o => !filterObj || o.objective_id === filterObj)
             .map(o => {
                 const myInits = filteredInitiatives.filter(i => i.objective_id === o.objective_id);
-                const ferdig = myInits.filter(i => i.status === 'Ferdig').length;
+                const ferdig = myInits.filter(i => i.status === 'Fullført').length;
                 const bak = myInits.filter(i => i.status === 'Bak skjema').length;
                 const pa = myInits.filter(i => i.status === 'På skjema').length;
                 const foran = myInits.filter(i => i.status === 'Foran skjema').length;
@@ -390,7 +392,7 @@ export const Dashboard = () => {
                                 <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-muted)' }}>
                                     <th style={{ padding: '0.75rem' }}>Ansatt</th>
                                     <th style={{ padding: '0.75rem', textAlign: 'center' }}>Totalt</th>
-                                    <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-done)' }}>Ferdig</th>
+                                    <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-done)' }}>Fullført</th>
                                     <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-ahead)' }}>Foran skjema</th>
                                     <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-on-track)' }}>På skjema</th>
                                     <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-behind)' }}>Bak skjema</th>
@@ -433,7 +435,7 @@ export const Dashboard = () => {
                                 <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-muted)' }}>
                                     <th style={{ padding: '0.75rem' }}>Objective</th>
                                     <th style={{ padding: '0.75rem', textAlign: 'center' }}>Totalt</th>
-                                    <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-done)' }}>Ferdig</th>
+                                    <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-done)' }}>Fullført</th>
                                     <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-ahead)' }}>Foran skjema</th>
                                     <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-on-track)' }}>På skjema</th>
                                     <th style={{ padding: '0.75rem', textAlign: 'center', color: 'var(--status-behind)' }}>Bak skjema</th>

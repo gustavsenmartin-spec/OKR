@@ -61,6 +61,12 @@ export const api = {
             .eq('is_active', true)
             .order('created_at', { ascending: false });
 
+        if (filters.is_archived !== undefined) {
+            query = query.eq('is_archived', filters.is_archived);
+        } else {
+            query = query.eq('is_archived', false);
+        }
+
         if (filters.employee_id) {
             query = query.eq('employee_id', filters.employee_id);
         }

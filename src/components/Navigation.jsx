@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, FilePlus, Edit3, Target, Users, ListTree } from 'lucide-react';
+import { LayoutDashboard, FilePlus, Edit3, Target, Users, ListTree, Archive as ArchiveIcon } from 'lucide-react';
 import './Navigation.css';
 
 export const Navigation = () => {
@@ -35,6 +35,10 @@ export const Navigation = () => {
                 <NavLink to="/employees" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
                     <Users size={20} />
                     <span>Ansatte</span>
+                </NavLink>
+                <NavLink to="/archive" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
+                    <ArchiveIcon size={20} />
+                    <span>Arkiv</span>
                 </NavLink>
             </div>
         </nav>

@@ -9,6 +9,7 @@ import { Employees } from './pages/Employees';
 import { RegisterInitiative } from './pages/RegisterInitiative';
 import { UpdateInitiatives } from './pages/UpdateInitiatives';
 import { Dashboard } from './pages/Dashboard';
+import { Archive } from './pages/Archive';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -72,6 +73,7 @@ function App() {
           <Route path="/update" element={<UpdateInitiatives />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/employees" element={<Employees />} />
+          <Route path="/archive" element={<Archive />} />
         </Routes>
       </main>
     </div>

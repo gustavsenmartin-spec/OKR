@@ -18,8 +18,17 @@ export const StatusBadge = ({ status }) => {
             bg = '#D1FAE5';
             break;
         case 'Ferdig':
+        case 'Fullført':
             color = 'var(--status-done)';
             bg = '#DBEAFE';
+            break;
+        case 'Ikke fullført, men arkiveres':
+            color = '#475569';
+            bg = '#E2E8F0';
+            break;
+        case 'Ikke fullført, videreføres til neste periode':
+            color = '#7C3AED';
+            bg = '#EDE9FE';
             break;
         default:
             bg = '#F1F5F9';
