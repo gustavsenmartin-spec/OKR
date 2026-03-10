@@ -30,7 +30,7 @@ export const Dashboard = () => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
     // Collapsible states
-    const [showCharts, setShowCharts] = useState(false);
+    const [showCharts, setShowCharts] = useState(true);
     const [showEmpTable, setShowEmpTable] = useState(false);
     const [showObjTable, setShowObjTable] = useState(false);
     const [showInitTable, setShowInitTable] = useState(false);
