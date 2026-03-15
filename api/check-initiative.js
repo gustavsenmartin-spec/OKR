@@ -60,6 +60,8 @@ Svar kort og direkte. Ikke vær unødvendig positiv – vær ærlig og konstrukt
         res.status(200).json({ feedback });
     } catch (error) {
         console.error('Error calling Anthropic API:', error);
-        res.status(500).json({ error: 'Failed to check initiative' });
+        // Safely extract the error message to send back
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        res.status(500).json({ error: `Failed to check initiative: ${errorMessage}` });
     }
 }
