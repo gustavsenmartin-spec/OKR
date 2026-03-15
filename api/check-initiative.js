@@ -47,7 +47,7 @@ Svar kort og direkte. Ikke vær unødvendig positiv – vær ærlig og konstrukt
         const userMessage = `Initiativ tittel: ${title}\nBeskrivelse: ${description || 'Ingen beskrivelse'}`;
 
         const response = await anthropic.messages.create({
-            model: 'claude-3-5-sonnet-20241022',
+            model: 'claude-3-5-sonnet-20240620',
             max_tokens: 1024,
             system: systemPrompt,
             messages: [
