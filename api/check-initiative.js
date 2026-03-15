@@ -16,19 +16,24 @@ export default async function handler(req, res) {
     });
 
     try {
-        const { title, description } = req.body;
+        const { title, description, objectiveTitle, keyResultTitle } = req.body;
 
         if (!title) {
             return res.status(400).json({ error: 'Title is required' });
         }
 
-        const systemPrompt = `Du er en coach som hjelper ansatte med å formulere gode initiativer.
+        const contextString = objectiveTitle && keyResultTitle 
+            ? `Kontekst for initiativet (som det *må* støtte opp under):\n- Overordnet Mål (Objective): ${objectiveTitle}\n- Nøkkelresultat (Key Result): ${keyResultTitle}\n\n`
+            : '';
 
-Et godt initiativ skal være:
+        const systemPrompt = `Du er en coach som hjelper ansatte med å formulere gode initiativer for sine OKR-er.
+
+${contextString}Et godt initiativ skal være:
 - Konkret: hva skal gjøres, ikke bare en intensjon
 - Handlingsorientert: starter med et verb og beskriver en handling
 - Realistisk og avgrenset: ikke for vagt eller for bredt
 - Helst tidssatt eller med en tydelig milepæl
+- Svært relevant for Nøkkelresultatet (Key Result) det tilhører
 
 Vurder initiativet og svar alltid i dette formatet:
 
@@ -36,11 +41,11 @@ Vurder initiativet og svar alltid i dette formatet:
 
 **Hva er bra:** [1-2 setninger om det som fungerer]
 
-**Hva mangler:** [1-2 setninger om hva som gjør det svakt eller uklart, eller "Ingenting" hvis klar til bruk]
+**Hva mangler:** [1-2 setninger om hva som gjør det svakt, uklart, eller lite relevant for Nøkkelresultatet. Skriv "Ingenting" hvis klar til bruk]
 
 **Prøv dette i stedet:**
-- "[Alternativ 1 – mer konkret og avgrenset]"
-- "[Alternativ 2 – med tydeligere tidspunkt eller milepæl]"
+- "[Alternativ 1 – mer konkret og avgrenset, og relevant for ${keyResultTitle || 'Nøkkelresultatet'}]"
+- "[Alternativ 2 – med tydeligere tidspunkt eller milepæl, og relevant for ${keyResultTitle || 'Nøkkelresultatet'}]"
 
 Svar kort og direkte. Ikke vær unødvendig positiv – vær ærlig og konstruktiv.`;
 

@@ -182,7 +182,12 @@ const InitiativeForm = ({ keyResult, objective, currentEmployee, onCancel, onSuc
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ title, description }),
+                body: JSON.stringify({ 
+                    title, 
+                    description,
+                    objectiveTitle: objective.objective_title,
+                    keyResultTitle: keyResult.key_result_title
+                }),
             });
             
             if (!response.ok) {
