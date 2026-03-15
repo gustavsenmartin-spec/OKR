@@ -230,8 +230,18 @@ const InitiativeForm = ({ keyResult, objective, currentEmployee, onCancel, onSuc
             
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap' }}>
                 <button type="button" className="btn-primary" style={{ backgroundColor: 'var(--text-muted)' }} onClick={onCancel} disabled={loading || isCheckingAi}>Avbryt</button>
-                <button type="button" className="btn-primary" style={{ backgroundColor: '#64748b' }} onClick={handleCheckAi} disabled={loading || isCheckingAi || !title}>
-                    {isCheckingAi ? 'Sjekker...' : 'Sjekk initiativ'}
+                <button 
+                    type="button" 
+                    className="btn-primary" 
+                    style={{ 
+                        backgroundColor: isCheckingAi ? '#eab308' /* Yellow */ : aiFeedback && !aiFeedback.startsWith('**Feil:**') ? '#22c55e' /* Green */ : '#64748b',
+                        color: isCheckingAi ? '#000' : '#fff',
+                        transition: 'background-color 0.3s ease'
+                    }} 
+                    onClick={handleCheckAi} 
+                    disabled={loading || isCheckingAi || !title}
+                >
+                    {isCheckingAi ? 'Sjekker...' : aiFeedback && !aiFeedback.startsWith('**Feil:**') ? 'Sjekket!' : 'Sjekk initiativ'}
                 </button>
                 <button type="submit" className="btn-primary" disabled={loading || isCheckingAi}>{loading ? 'Lagrer...' : 'Lagre initiative'}</button>
             </div>
