@@ -22,7 +22,7 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Title is required' });
         }
 
-        const contextString = objectiveTitle && keyResultTitle 
+        const contextString = objectiveTitle && keyResultTitle
             ? `Kontekst for initiativet (som det *må* støtte opp under):\n- Overordnet Mål (Objective): ${objectiveTitle}\n- Nøkkelresultat (Key Result): ${keyResultTitle}\n\n`
             : '';
 
@@ -44,8 +44,8 @@ Vurder initiativet og svar alltid i dette formatet:
 **Hva mangler:** [1-2 setninger om hva som gjør det svakt, uklart, eller lite relevant for Nøkkelresultatet. Skriv "Ingenting" hvis klar til bruk]
 
 **Prøv dette i stedet:**
-- "[Alternativ 1 – mer konkret og avgrenset, og relevant for ${keyResultTitle || 'Nøkkelresultatet'}]"
-- "[Alternativ 2 – med tydeligere tidspunkt eller milepæl, og relevant for ${keyResultTitle || 'Nøkkelresultatet'}]"
+- "[Alternativ 1 – mer konkret og avgrenset, og relevant for ${keyResultTitle || 'Nøkkelresultatet'} og ${objectiveTitle || 'Objective'}]"
+- "[Alternativ 2 – mer konkret og avgrenset, og relevant for ${keyResultTitle || 'Nøkkelresultatet'} og ${objectiveTitle || 'Objective'}]"
 
 Svar kort og direkte. Ikke vær unødvendig positiv – vær ærlig og konstruktiv.`;
 
