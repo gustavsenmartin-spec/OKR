@@ -186,7 +186,12 @@ const InitiativeForm = ({ keyResult, objective, currentEmployee, onCancel, onSuc
             });
             
             if (!response.ok) {
-                throw new Error('Kunne ikke sjekke initiativet. Prøv igjen senere.');
+                let errorMsg = 'Kunne ikke sjekke initiativet. Prøv igjen senere.';
+                try {
+                    const errData = await response.json();
+                    if (errData.error) errorMsg = errData.error;
+                } catch(e) {}
+                throw new Error(errorMsg);
             }
             
             const data = await response.json();

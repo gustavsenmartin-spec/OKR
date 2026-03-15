@@ -1,14 +1,19 @@
 import Anthropic from '@anthropic-ai/sdk';
 
-const anthropic = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY,
-});
-
 export default async function handler(req, res) {
     // Only allow POST requests
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
+
+    // Check for API key at runtime to prevent Vercel 500 boot errors if missing
+    if (!process.env.ANTHROPIC_API_KEY) {
+        return res.status(500).json({ error: 'Systemfeil: ANTHROPIC_API_KEY mangler i Vercel sine Environment Variables.' });
+    }
+
+    const anthropic = new Anthropic({
+        apiKey: process.env.ANTHROPIC_API_KEY,
+    });
 
     try {
         const { title, description } = req.body;
