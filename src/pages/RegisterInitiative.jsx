@@ -143,6 +143,8 @@ const InitiativeForm = ({ keyResult, objective, currentEmployee, onCancel, onSuc
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isCheckingAi, setIsCheckingAi] = useState(false);
+    const [aiFeedback, setAiFeedback] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -165,6 +167,37 @@ const InitiativeForm = ({ keyResult, objective, currentEmployee, onCancel, onSuc
         }
     };
 
+    const handleCheckAi = async () => {
+        if (!title) {
+            alert('Vennligst skriv inn en tittel før du sjekker initiativet.');
+            return;
+        }
+        
+        setIsCheckingAi(true);
+        setAiFeedback(null);
+        
+        try {
+            const response = await fetch('/api/check-initiative', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title, description }),
+            });
+            
+            if (!response.ok) {
+                throw new Error('Kunne ikke sjekke initiativet. Prøv igjen senere.');
+            }
+            
+            const data = await response.json();
+            setAiFeedback(data.feedback);
+        } catch (err) {
+            setAiFeedback(`**Feil:** ${err.message}`);
+        } finally {
+            setIsCheckingAi(false);
+        }
+    };
+
     return (
         <form onSubmit={handleSubmit} style={{ padding: '1rem', backgroundColor: 'var(--surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--secondary)' }}>
             <div className="form-group">
@@ -175,9 +208,27 @@ const InitiativeForm = ({ keyResult, objective, currentEmployee, onCancel, onSuc
                 <label>Beskrivelse (valgfritt)</label>
                 <textarea className="form-control" rows={3} value={description} onChange={e => setDescription(e.target.value)} placeholder="Utdyp hvordan du vil løse det" />
             </div>
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                <button type="button" className="btn-primary" style={{ backgroundColor: 'var(--text-muted)' }} onClick={onCancel} disabled={loading}>Avbryt</button>
-                <button type="submit" className="btn-primary" disabled={loading}>{loading ? 'Lagrer...' : 'Lagre initiative'}</button>
+            
+            {aiFeedback && (
+                <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'var(--background)', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--primary)' }}>
+                    <div style={{ fontWeight: 600, marginBottom: '0.5rem', color: 'var(--primary)' }}>AI-Tilbakemelding:</div>
+                    <div style={{ whiteSpace: 'pre-wrap', fontSize: '0.875rem', lineHeight: '1.5' }}>
+                        {aiFeedback.split('\n').map((line, i) => {
+                            if (line.startsWith('**') && line.endsWith('**')) {
+                                return <strong key={i} style={{ display: 'block', marginTop: i > 0 ? '0.5rem' : 0 }}>{line.replace(/\*\*/g, '')}</strong>;
+                            }
+                            return <span key={i} style={{ display: 'block' }}>{line.replace(/\*\*/g, '')}</span>;
+                        })}
+                    </div>
+                </div>
+            )}
+            
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap' }}>
+                <button type="button" className="btn-primary" style={{ backgroundColor: 'var(--text-muted)' }} onClick={onCancel} disabled={loading || isCheckingAi}>Avbryt</button>
+                <button type="button" className="btn-primary" style={{ backgroundColor: '#64748b' }} onClick={handleCheckAi} disabled={loading || isCheckingAi || !title}>
+                    {isCheckingAi ? 'Sjekker...' : 'Sjekk initiativ'}
+                </button>
+                <button type="submit" className="btn-primary" disabled={loading || isCheckingAi}>{loading ? 'Lagrer...' : 'Lagre initiative'}</button>
             </div>
         </form>
     );
