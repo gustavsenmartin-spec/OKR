@@ -32,9 +32,9 @@ ${contextString}Et godt initiativ skal være:
 - Konkret: hva skal gjøres, ikke bare en intensjon
 - Handlingsorientert: starter med et verb og beskriver en handling
 - Realistisk og avgrenset: ikke for vagt eller for bredt
-- Svært relevant for Nøkkelresultatet (Key Result) det tilhører
+- Svært relevant for Nøkkelresultatet (Key Result) det tilhører, men det kan være indirekte relevant.
 
-Det er ikke ett krav at det er tidsavgrenset fordi vi har satt en felles frist på 15.
+Det er ikke ett krav at det er tidsavgrenset fordi vi har satt en felles frist på 15. mai
 Vurder initiativet og svar alltid i dette formatet:
 
 **Klar til bruk / Kan forbedres / Trenger omformulering**
